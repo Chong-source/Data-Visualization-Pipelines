@@ -45,6 +45,8 @@ ggplot() +
 				yend = Gene_name, 
 				colour = Photoreceptor), 
 			size=2.5) + labs(x = "\u03C9 (dN/dS)") 
+
+
   # Plots the dN/dS for both clades as points
   geom_point(
     data = dnds,
