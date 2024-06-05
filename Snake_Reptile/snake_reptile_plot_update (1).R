@@ -6,7 +6,7 @@ library(tidyverse)
 dnds <- read.csv("Snake_Reptile_CmC (1).csv")
 
 # Transforms to wide format for plotting lines
-dnds_line <- spread(dnds, key = Clade, value = dNdS)
+dnds_line <- spread(dnds, key = Background_Foreground, value = dNdS)
 
 ## Randomly Generated data from differences in Reptile and Snack Genes
 ## To show significance
@@ -47,7 +47,7 @@ ggplot() +
 				y = Gene_name, 
 				xend = Snake, 
 				yend = Gene_name, 
-				colour = Photoreceptor), 
+				colour = Gene_type), 
 			size=2.5) + labs(x = "\u03C9 (dN/dS)") +
 
   # Plots the dN/dS for both clades as points
@@ -55,7 +55,7 @@ ggplot() +
     data = dnds,
     aes(x=dNdS, 
         y=Gene_name, 
-        fill=Clade),
+        fill=Background_Foreground),
     size=2.5, 
     shape = 21) +
   
@@ -64,7 +64,7 @@ ggplot() +
 	# Coloiur scheme for the background and foreground dN/dS
 	scale_fill_manual(values=c('white','black')) +
 	# Groups data by photoreceptor class
-  facet_grid(scales="free_y", space = "free_y", facets = Photoreceptor ~.) +
+  facet_grid(scales="free_y", space = "free_y", facets = Gene_type ~.) +
   # Scales axis and sets the aesthetics for the chart
 	scale_x_continuous(n.breaks = 6) +
 	theme(axis.text.x = element_text(angle = 0, hjust = 0.5), 
