@@ -1,4 +1,4 @@
-Photoreceptor,Clade,Gene_name,dNdS
+Gene_type,Background_Foreground,Gene_name,dNdS
 Rod,Reptile,CNGA1,0.285
 Rod,Reptile,CNGB1,0.27
 Rod,Snake,CNGB1,0.362
