@@ -3,32 +3,18 @@
 
 library(tidyverse)
 
-dnds <- read.csv("Snake_Reptile_CmC (1).csv")
+dnds <- read.csv("Sample_Gene_Bank_with_types - Sheet1.csv")
+
+# if(all(dnds$Gene_type == 'na')){
+#   dnds = dnds[,!(names(dnds) %in% c("Gene_type"))]
+# }
 
 # Transforms to wide format for plotting lines
 dnds_line <- spread(dnds, key = Background_Foreground, value = dNdS)
 
-## Randomly Generated data from differences in Reptile and Snack Genes
-## To show significance
-sequence <- vector(mode = 'list', length = length(dnds_line$Gene_name))
-reptile_col <- dnds_line$Reptile
-snake_col <- dnds_line$Snake
-new_col <- c()
-for (i in 1:length(snake_col)){
-  if (is.na(snake_col[i]) || is.na(reptile_col[i])){
-    new_col <- c(new_col, "insignificant")
-  }
-  else{
-    if (abs(snake_col[i] - reptile_col[i]) > 0.31){
-      new_col <- c(new_col, "significant")
-    }
-  }
-}
-dnds_line$Absolute_Diff <- new_col
-
 
 ## Plots the dN/dS values for each clade by gene and grouped by photoreceptor class
-ggplot() +
+graph <- ggplot() +
   
   # Overlay a segment graph as a background to represent significance 
   geom_segment(
@@ -37,16 +23,16 @@ ggplot() +
         y = Gene_name, 
         xend = rep(Inf, length(Gene_name)), 
         yend = Gene_name, 
-        colour = Absolute_Diff), 
-    size=2.5) + scale_fill_brewer(palette="Dark2")+
+        colour = Statistical_Significance), 
+    size=2.5) + 
   
 	# Plots lines between dN/dS values
 	geom_segment(
 		data = dnds_line,
 		colour = "#1952a8",
-			aes(x = Reptile, 
+			aes(x = `Background `, 
 				y = Gene_name, 
-				xend = Snake, 
+				xend = Foreground, 
 				yend = Gene_name), 
 			size=2.5) + labs(x = "\u03C9 (dN/dS)") +
 
@@ -60,16 +46,7 @@ ggplot() +
     shape = 21) + 
   scale_fill_manual(name="Background/Foreground", values=c("black", "white")) +
   scale_color_manual(name="Statistical Significance", values = c("#eeeeee","#bbbbbb"))+
-	# Colour scheme for the different photoreceptor classes
-	
-  # scale_color_manual(name="Gene Types", values=c('red', 'green', 'blue', 'yellow', 'orange')) +
-	
-  # Coloiur scheme for the background and foreground dN/dS
-	
-  # scale_fill_manual(name="Background Foreground", values=c('white','black')) +
-	
-  # Groups data by photoreceptor class
-  facet_grid(scales="free_y", space = "free_y", facets = Gene_type ~.) +
+
   # Scales axis and sets the aesthetics for the chart
 	scale_x_continuous(n.breaks = 6) +
 	theme(axis.text.x = element_text(angle = 0, hjust = 0.5), 
@@ -82,5 +59,12 @@ ggplot() +
 		axis.ticks.y = element_blank(),
 		axis.title.y = element_blank())
 
+# Groups data by gene type
+if (!(all(dnds_line$Gene_type == "na"))){
+    graph +
+    facet_grid(scales="free_y", space = "free_y", facets = Gene_type ~.)
+}else{
+    graph
+}
 
 
