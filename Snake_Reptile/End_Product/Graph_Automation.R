@@ -1,13 +1,9 @@
 ## Plots clade model dN/dS estimates by gene
-## Last updated 20220523 by avn
+## Last updated 20240607 by Chong
 
 library(tidyverse)
 
 dnds <- read.csv("Sample_Gene_Bank_with_types - Sheet1.csv")
-
-# if(all(dnds$Gene_type == 'na')){
-#   dnds = dnds[,!(names(dnds) %in% c("Gene_type"))]
-# }
 
 # Transforms to wide format for plotting lines
 dnds_line <- spread(dnds, key = Background_Foreground, value = dNdS)
