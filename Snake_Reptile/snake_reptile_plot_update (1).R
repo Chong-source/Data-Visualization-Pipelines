@@ -38,16 +38,16 @@ ggplot() +
         xend = rep(Inf, length(Gene_name)), 
         yend = Gene_name, 
         colour = Absolute_Diff), 
-    size=2.5) +
+    size=2.5) + scale_fill_brewer(palette="Dark2")+
   
 	# Plots lines between dN/dS values
 	geom_segment(
 		data = dnds_line,
+		colour = "#1952a8",
 			aes(x = Reptile, 
 				y = Gene_name, 
 				xend = Snake, 
-				yend = Gene_name, 
-				colour = Gene_type), 
+				yend = Gene_name), 
 			size=2.5) + labs(x = "\u03C9 (dN/dS)") +
 
   # Plots the dN/dS for both clades as points
@@ -57,13 +57,18 @@ ggplot() +
         y=Gene_name, 
         fill=Background_Foreground),
     size=2.5, 
-    shape = 21) +
-  
+    shape = 21) + 
+  scale_fill_manual(name="Background/Foreground", values=c("black", "white")) +
+  scale_color_manual(name="Statistical Significance", values = c("#eeeeee","#bbbbbb"))+
 	# Colour scheme for the different photoreceptor classes
-	scale_color_manual(values=c('red', 'green', '#DCDCDC', 'blue', '#808080')) +
-	# Coloiur scheme for the background and foreground dN/dS
-	scale_fill_manual(values=c('white','black')) +
-	# Groups data by photoreceptor class
+	
+  # scale_color_manual(name="Gene Types", values=c('red', 'green', 'blue', 'yellow', 'orange')) +
+	
+  # Coloiur scheme for the background and foreground dN/dS
+	
+  # scale_fill_manual(name="Background Foreground", values=c('white','black')) +
+	
+  # Groups data by photoreceptor class
   facet_grid(scales="free_y", space = "free_y", facets = Gene_type ~.) +
   # Scales axis and sets the aesthetics for the chart
 	scale_x_continuous(n.breaks = 6) +
@@ -72,7 +77,7 @@ ggplot() +
 		# the background of the data, want to change to grey white if insignificant
 		panel.grid.major = element_line(size = 3, colour = "white"), 
 		panel.grid.minor.x = element_blank(),
-		panel.grid.major.x = element_line(colour = "black",size = 0.5),
+		panel.grid.major.x = element_line(colour = "black",size = 0.3),
 		axis.ticks.x = element_blank(),
 		axis.ticks.y = element_blank(),
 		axis.title.y = element_blank())
