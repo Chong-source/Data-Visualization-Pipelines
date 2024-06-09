@@ -1,13 +1,22 @@
 ## Plots clade model dN/dS estimates by gene
 ## Last updated 20240607 by Chong
 
-library(tidyverse)
+## rvg allows you to convert R objects into vectors that 
+## pptx can understand. The officer package allows manipulation 
+## of MS Files from the R interface.
 
-dnds <- read.csv("Sample_Gene_Bank_with_types - Sheet1.csv")
+library(tidyverse)
+library(rvg)
+library(dplyr)
+library(ggplot2)
+library(officer)
+library(dplyr)
+
+# Read in the ppt
+my_ppt <- read_pptx('Presentation1.pptx')
 
 # Transforms to wide format for plotting lines
 dnds_line <- spread(dnds, key = Background_Foreground, value = dNdS)
-
 
 ## Plots the dN/dS values for each clade by gene and grouped by photoreceptor class
 graph <- ggplot() +
@@ -63,4 +72,10 @@ if (!(all(dnds_line$Gene_type == "na"))){
     graph
 }
 
+## insert into ppt 
+my_ppt <- my_ppt %>% ph_with(dml(ggobj=graph),
+                             location = ph_location_label(ph_label = 'R Placeholder' ))
+## save/download ppt 
+print(my_ppt, paste0('Presentation2.pptx'))
+#NOTE: The 'ggobj=' argument must be specified within the dml call #so R recognizes we are passing an EXISTING ggplot object, not #trying to create one.
 
