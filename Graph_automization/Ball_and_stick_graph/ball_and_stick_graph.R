@@ -13,7 +13,7 @@ library(officer)
 library(dplyr)
 
 # Read in the ppt
-my_ppt <- read_pptx('Presentation1.pptx')
+my_ppt <- read_pptx('Template.pptx')
 
 # Transforms to wide format for plotting lines
 dnds_line <- spread(dnds, key = Background_Foreground, value = dNdS)
@@ -76,6 +76,6 @@ if (!(all(dnds_line$Gene_type == "na"))){
 my_ppt <- my_ppt %>% ph_with(dml(ggobj=graph),
                              location = ph_location_label(ph_label = 'R Placeholder' ))
 ## save/download ppt 
-print(my_ppt, paste0('Presentation2.pptx'))
+print(my_ppt, paste0('Presentation3.pptx'))
 #NOTE: The 'ggobj=' argument must be specified within the dml call #so R recognizes we are passing an EXISTING ggplot object, not #trying to create one.
 
