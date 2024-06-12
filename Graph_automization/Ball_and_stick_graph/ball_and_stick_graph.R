@@ -78,6 +78,6 @@ if (!(all(dnds_line$Gene_type == "na"))){
 ## insert into ppt 
 my_ppt <- my_ppt %>% ph_with(dml(ggobj=graph),
                              location = ph_location_label(ph_label = 'R Placeholder' ))
-## save/download ppt 
+## save/download pptx
 print(my_ppt, paste0('Presentation.pptx'))
 
