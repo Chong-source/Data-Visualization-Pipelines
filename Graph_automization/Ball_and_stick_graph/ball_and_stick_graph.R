@@ -57,9 +57,9 @@ graph <- ggplot() +
 	theme(axis.text.x = element_text(angle = 0, hjust = 0.5), 
 		panel.background = element_rect(fill = "white"),
 		# the background of the data, want to change to grey white if insignificant
-		panel.grid.major = element_line(size = 3, colour = "white"), 
+		panel.grid.major = element_line(linewidth=3, colour = "white"), 
 		panel.grid.minor.x = element_blank(),
-		panel.grid.major.x = element_line(colour = "black",size = 0.3),
+		panel.grid.major.x = element_line(colour = "black",linewidth=0.3),
 		axis.ticks.x = element_blank(),
 		axis.ticks.y = element_blank(),
 		axis.title.y = element_blank())
@@ -76,6 +76,6 @@ if (!(all(dnds_line$Gene_type == "na"))){
 my_ppt <- my_ppt %>% ph_with(dml(ggobj=graph),
                              location = ph_location_label(ph_label = 'R Placeholder' ))
 ## save/download ppt 
-print(my_ppt, paste0('Presentation3.pptx'))
+print(my_ppt, paste0('Presentation.pptx'))
 #NOTE: The 'ggobj=' argument must be specified within the dml call #so R recognizes we are passing an EXISTING ggplot object, not #trying to create one.
 
