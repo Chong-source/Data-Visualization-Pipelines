@@ -80,5 +80,4 @@ my_ppt <- my_ppt %>% ph_with(dml(ggobj=graph),
                              location = ph_location_label(ph_label = 'R Placeholder' ))
 ## save/download ppt 
 print(my_ppt, paste0('Presentation.pptx'))
-#NOTE: The 'ggobj=' argument must be specified within the dml call #so R recognizes we are passing an EXISTING ggplot object, not #trying to create one.
 
