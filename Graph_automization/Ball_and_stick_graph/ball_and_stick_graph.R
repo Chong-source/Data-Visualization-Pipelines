@@ -40,7 +40,7 @@ graph <- ggplot() +
         xend = rep(Inf, length(Gene_name)), 
         yend = Gene_name, 
         colour = Statistical_Significance), 
-    size=4) + 
+    linewidth=4) + 
   
 	# Plots lines between dN/dS values
 	geom_segment(
@@ -50,7 +50,7 @@ graph <- ggplot() +
 				y = Gene_name, 
 				xend = Foreground, 
 				yend = Gene_name), 
-			size=4) + labs(x = "\u03C9 (dN/dS)") +
+			linewidth=4) + labs(x = "\u03C9 (dN/dS)") +
 
   # Plots the dN/dS for both clades as points
   geom_point(
@@ -59,7 +59,7 @@ graph <- ggplot() +
     aes(x=dNdS, 
         y=Gene_name, 
         fill=Background_Foreground),
-    size=4.7, 
+    size=4.3, 
     shape = 21) + 
   scale_fill_manual(name="Background/Foreground", values=c("black", "white")) +
   scale_color_manual(name="Statistical Significance", values = color) +
