@@ -51,29 +51,36 @@ graph <- ggplot() +
 				xend = Foreground, 
 				yend = Gene_name), 
 			linewidth=4) + labs(x = "\u03C9 (dN/dS)") +
-
+  
+  # Add Vertical lines to the graph
+  geom_vline(
+    xintercept = as.numeric(na.omit(layer_scales(graph)$x$break_positions())),
+    color = "white",
+    linewidth = 0.5
+  ) + 
+  
   # Plots the dN/dS for both clades as points
   geom_point(
     data = dnds,
     stroke = 1.2,
-    aes(x=dNdS, 
-        y=Gene_name, 
+    aes(x=dNdS,
+        y=Gene_name,
         fill=Background_Foreground),
-    size=4.3, 
+    size=4.3,
     shape = 21) + 
   scale_fill_manual(name="Background/Foreground", values=c("black", "white")) +
-  scale_color_manual(name="Statistical Significance", values = color) +
-
+  scale_color_manual(name="Statistical Significance", values = color) + 
+  
   # Scales axis and sets the aesthetics for the chart
 	scale_x_continuous(n.breaks = 6) +
 	theme(
 	  axis.text.x = element_text(angle = 0, hjust = 0.5), 
-	  panel.background = element_blank(),
+	  panel.background = element_rect(fill = NA),
 		# the background of the data, want to change to grey white if insignificant
-		panel.grid.major = element_line(linewidth=3, colour = NA), 
+		panel.grid.major = element_blank(), 
 		panel.grid.minor.x = element_blank(),
-		panel.grid.major.x = element_line(colour = "white", linewidth=0.5),
-		panel.ontop = TRUE,
+		panel.grid.major.x = element_blank(),
+		panel.ontop = FALSE,
 		panel.spacing.y = unit(12, 'pt'),
 	  axis.ticks.x = element_line(color = "black", linewidth = 0.6),
 		axis.line.x.bottom = element_line(colour = "black", linewidth =0.6),
@@ -92,7 +99,6 @@ graph <- ggplot() +
   
   # Add more ticks to the graph
   scale_x_continuous(breaks = scales::pretty_breaks(n = 10))
-		
 
 # Groups data by gene type
 if (!(all(dnds_line$Gene_type == "na"))){
