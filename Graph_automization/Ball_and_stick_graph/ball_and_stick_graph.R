@@ -53,6 +53,7 @@ graph <- ggplot() +
 			linewidth=4) + labs(x = "\u03C9 (dN/dS)") +
   
   # Add Vertical lines to the graph
+  # source: https://stackoverflow.com/questions/71569614/how-to-get-a-complete-vector-of-breaks-from-the-scale-of-a-plot-in-r
   geom_vline(
     xintercept = as.numeric(na.omit(layer_scales(graph)$x$break_positions())),
     color = "white",
