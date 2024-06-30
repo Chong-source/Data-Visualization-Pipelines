@@ -12,7 +12,7 @@ library(ggplot2)
 library(officer)
 
 # Read the file into csv
-dnds <- read.csv("SampleData_without_types.csv")
+dnds <- read.csv("SampleData_types.csv")
 
 # Read in the ppt
 my_ppt <- read_pptx('Template.pptx')
@@ -104,7 +104,7 @@ graph <- ggplot() +
 # Groups data by gene type
 if (!(all(dnds_line$Gene_type == "na"))){
     graph <- graph +
-    facet_grid(scales="free_y", space = "free_y", facets = Gene_type ~.)
+    facet_grid(scales="free_y", space = "free_y", rows = Gene_type ~.)
     graph
 }else{
     graph
