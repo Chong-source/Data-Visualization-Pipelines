@@ -29,6 +29,8 @@ if(all(dnds_line$Statistical_Significance == "Yes")){
   color <- c("#eeeeee","#bbbbbb")
 }
 
+range_all_data <- c(dnds_line$Background, dnds_line$Foreground)
+
 ## Plots the dN/dS values for each clade by gene and grouped by photoreceptor class
 graph <- ggplot() +
   
@@ -42,15 +44,24 @@ graph <- ggplot() +
         colour = Statistical_Significance), 
     linewidth=4) + 
   
-	# Plots lines between dN/dS values
-	geom_segment(
-		data = dnds_line,
-		colour = "#1952a8",
-			aes(x = Background, 
-				y = Gene_name, 
-				xend = Foreground, 
-				yend = Gene_name), 
-			linewidth=4) + labs(x = "\u03C9 (dN/dS)") +
+  # Plots lines between dN/dS values
+  geom_segment(
+    data = dnds_line,
+    colour = "#1952a8",
+    aes(x = Background, 
+        y = Gene_name, 
+        xend = Foreground, 
+        yend = Gene_name), 
+    linewidth=4) + labs(x = "\u03C9 (dN/dS)") +
+  
+  # Adding breaks to the x-axis, for some reason, the breaks only contain the max
+  # if you set the limits for scale_x_continuous
+  scale_x_continuous(n.breaks = 10, limits = c(floor(min(range_all_data)), 
+                                               ceiling(max(range_all_data))))
+
+# print(as.numeric(na.omit(layer_scales(graph)$x$break_positions())))
+
+graph <- graph +
   
   # Add Vertical lines to the graph
   # source: https://stackoverflow.com/questions/71569614/how-to-get-a-complete-vector-of-breaks-from-the-scale-of-a-plot-in-r
@@ -73,41 +84,37 @@ graph <- ggplot() +
   scale_color_manual(name="Statistical Significance", values = color) + 
   
   # Scales axis and sets the aesthetics for the chart
-	scale_x_continuous(n.breaks = 6) +
-	theme(
-	  axis.text.x = element_text(angle = 0, hjust = 0.5), 
-	  panel.background = element_rect(fill = NA),
-		# the background of the data, want to change to grey white if insignificant
-		panel.grid.major = element_blank(), 
-		panel.grid.minor.x = element_blank(),
-		panel.grid.major.x = element_blank(),
-		panel.ontop = FALSE,
-		panel.spacing.y = unit(12, 'pt'),
-	  axis.ticks.x = element_line(color = "black", linewidth = 0.6),
-		axis.line.x.bottom = element_line(colour = "black", linewidth =0.6),
-		axis.ticks.y = element_blank(),
-		axis.title.y = element_blank(),
-		text = element_text(size=15),
-		axis.text = element_text(size=13), 
-		axis.title.x = element_text(size=15, 
-		                          margin = margin(t = 15, r = 0, b = 0, l = 0)),
-		plot.title=element_text(size=15),
-		legend.text=element_text(size=13),
-		legend.title=element_text(size=15, margin = margin(b = 10)),
-		legend.key.spacing.y = unit(10, "pt"),
-		legend.spacing.y = unit(20, 'pt'),
-		plot.margin = unit(c(0, 0, 0, 70), "pt")) +
-  
-  # Add more ticks to the graph
-  scale_x_continuous(breaks = scales::pretty_breaks(n = 10))
+  theme(
+    axis.text.x = element_text(angle = 0, hjust = 0.5), 
+    panel.background = element_rect(fill = NA),
+    # the background of the data, want to change to grey white if insignificant
+    panel.grid.major = element_blank(), 
+    panel.grid.minor.x = element_blank(),
+    panel.grid.major.x = element_blank(),
+    panel.ontop = FALSE,
+    panel.spacing.y = unit(12, 'pt'),
+    axis.ticks.x = element_line(color = "black", linewidth = 0.6),
+    axis.line.x.bottom = element_line(colour = "black", linewidth =0.6),
+    axis.ticks.y = element_blank(),
+    axis.title.y = element_blank(),
+    text = element_text(size=15),
+    axis.text = element_text(size=13), 
+    axis.title.x = element_text(size=15, 
+                                margin = margin(t = 15, r = 0, b = 0, l = 0)),
+    plot.title=element_text(size=15),
+    legend.text=element_text(size=13),
+    legend.title=element_text(size=15, margin = margin(b = 10)),
+    legend.key.spacing.y = unit(10, "pt"),
+    legend.spacing.y = unit(20, 'pt'),
+    plot.margin = unit(c(0, 0, 0, 70), "pt"))
 
 # Groups data by gene type
 if (!(all(dnds_line$Gene_type == "na"))){
-    graph <- graph +
+  graph <- graph +
     facet_grid(scales="free_y", space = "free_y", rows = Gene_type ~.)
-    graph
+  graph
 }else{
-    graph
+  graph
 }
 
 ## insert into ppt
