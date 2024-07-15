@@ -10,9 +10,11 @@ library(rvg)
 library(dplyr)
 library(ggplot2)
 library(officer)
+library(ggnewscale)
+library(RColorBrewer)
 
 # Read the file into csv
-dnds <- read.csv("SampleData_types.csv")
+dnds <- read.csv("SampleData_without_types.csv")
 
 # Read in the ppt
 my_ppt <- read_pptx('Template.pptx')
@@ -20,7 +22,8 @@ my_ppt <- read_pptx('Template.pptx')
 # Transforms to wide format for plotting lines
 dnds_line <- spread(dnds, key = Background_Foreground, value = dNdS)
 
-# Fixing the color bug
+# Fixing the color bug where if all the data are insignificant
+# because the color template has 2 colors, it will show as significant.
 if(all(dnds_line$Statistical_Significance == "Yes")){
   color <- c("#bbbbbb")
 } else if(all(dnds_line$Statistical_Significance == "No")){
@@ -29,6 +32,14 @@ if(all(dnds_line$Statistical_Significance == "Yes")){
   color <- c("#eeeeee","#bbbbbb")
 }
 
+# Choosing the different colours for the segments when they are of diff gene_types
+if (!(all(dnds_line$Gene_type == "na"))){
+  gene_type_colours = brewer.pal(length(levels(factor(dnds_line$Gene_type))),"Spectral")
+}else{
+  gene_type_colours = '#1952a8'
+}
+
+# Getting the range for all data to set the max and the min of the axis
 range_all_data <- c(dnds_line$Background, dnds_line$Foreground)
 
 ## Plots the dN/dS values for each clade by gene and grouped by photoreceptor class
@@ -42,24 +53,34 @@ graph <- ggplot() +
         xend = rep(Inf, length(Gene_name)), 
         yend = Gene_name, 
         colour = Statistical_Significance), 
-    linewidth=4) + 
+        linewidth=4,
+        ) + 
+  scale_color_manual(name="Statistical Significance", values = color) + 
+  
+  # The function from the ggnewscale that allows R to have multiple manual 
+  # scales for color
+  new_scale_color() +
   
   # Plots lines between dN/dS values
+  # Two manual scale solutions: 
+  # https://stackoverflow.com/questions/59391352/use-two-colour-scales-possible-with-work-around
   geom_segment(
     data = dnds_line,
-    colour = "#1952a8",
-    aes(x = Background, 
+    aes(colour = factor(Gene_type), # important
+        x = Background, 
         y = Gene_name, 
         xend = Foreground, 
         yend = Gene_name), 
     linewidth=4) + labs(x = "\u03C9 (dN/dS)") +
+    scale_colour_manual(name = "Gene Types", values = gene_type_colours) +
+  
+  # Removes the legend for this specific legend
+  scale_colour_discrete(guide="none") +
   
   # Adding breaks to the x-axis, for some reason, the breaks only contain the max
   # if you set the limits for scale_x_continuous
   scale_x_continuous(n.breaks = 10, limits = c(floor(min(range_all_data)), 
                                                ceiling(max(range_all_data))))
-
-# print(as.numeric(na.omit(layer_scales(graph)$x$break_positions())))
 
 graph <- graph +
   
@@ -81,7 +102,7 @@ graph <- graph +
     size=4.3,
     shape = 21) + 
   scale_fill_manual(name="Background/Foreground", values=c("black", "white")) +
-  scale_color_manual(name="Statistical Significance", values = color) + 
+  
   
   # Scales axis and sets the aesthetics for the chart
   theme(
@@ -104,14 +125,13 @@ graph <- graph +
     plot.title=element_text(size=15),
     legend.text=element_text(size=13),
     legend.title=element_text(size=15, margin = margin(b = 10)),
-    legend.key.spacing.y = unit(10, "pt"),
     legend.spacing.y = unit(20, 'pt'),
+    legend.key.spacing.y = unit(10, "pt"),
     plot.margin = unit(c(0, 0, 0, 70), "pt"))
 
-# Groups data by gene type
 if (!(all(dnds_line$Gene_type == "na"))){
   graph <- graph +
-    facet_grid(scales="free_y", space = "free_y", rows = Gene_type ~.)
+    facet_grid(scales="free_y", space = "free_y", rows = Gene_type ~.) 
   graph
 }else{
   graph
