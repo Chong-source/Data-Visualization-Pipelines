@@ -120,8 +120,10 @@ graph <- graph +
   
   # Scales axis and sets the aesthetics for the chart
   theme(
-    axis.text.x = element_text(angle = 0, hjust = 0.5), 
-    panel.background = element_rect(fill = NA),
+    plot.background = element_blank(),
+    plot.margin = unit(c(0, 0, 0, 70), "pt"),
+    plot.title=element_text(size=15),
+    panel.background = element_blank(),
     # the background of the data, want to change to grey white if insignificant
     panel.grid.major = element_blank(), 
     panel.grid.minor.x = element_blank(),
@@ -133,15 +135,16 @@ graph <- graph +
     axis.ticks.y = element_blank(),
     axis.title.y = element_blank(),
     text = element_text(size=15),
-    axis.text = element_text(size=13), 
+    axis.text = element_text(size=13),
+    axis.text.x = element_text(angle = 0, hjust = 0.5),
     axis.title.x = element_text(size=15, 
                                 margin = margin(t = 15, r = 0, b = 0, l = 0)),
-    plot.title=element_text(size=15),
+    legend.background = element_blank(),
+    legend.box.background = element_blank(),
     legend.text=element_text(size=13),
     legend.title=element_text(size=15, margin = margin(b = 10)),
     legend.spacing.y = unit(20, 'pt'),
-    legend.key.spacing.y = unit(10, "pt"),
-    plot.margin = unit(c(0, 0, 0, 70), "pt"))
+    legend.key.spacing.y = unit(10, "pt"))
 
 if (!(all(dnds_line$Gene_type == "na"))){
   graph <- graph +
