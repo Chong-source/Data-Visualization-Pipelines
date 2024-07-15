@@ -14,7 +14,7 @@ library(ggnewscale)
 library(RColorBrewer)
 
 # Read the file into csv
-dnds <- read.csv("SampleData_without_types.csv")
+dnds <- read.csv("SampleData_types.csv")
 
 # Read in the ppt
 my_ppt <- read_pptx('Template.pptx')
@@ -30,13 +30,6 @@ if(all(dnds_line$Statistical_Significance == "Yes")){
   color <- c("#eeeeee")
 } else{
   color <- c("#eeeeee","#bbbbbb")
-}
-
-# Choosing the different colours for the segments when they are of diff gene_types
-if (!(all(dnds_line$Gene_type == "na"))){
-  gene_type_colours = brewer.pal(length(levels(factor(dnds_line$Gene_type))),"Spectral")
-}else{
-  gene_type_colours = '#1952a8'
 }
 
 # Getting the range for all data to set the max and the min of the axis
@@ -59,28 +52,49 @@ graph <- ggplot() +
   
   # The function from the ggnewscale that allows R to have multiple manual 
   # scales for color
-  new_scale_color() +
-  
-  # Plots lines between dN/dS values
-  # Two manual scale solutions: 
-  # https://stackoverflow.com/questions/59391352/use-two-colour-scales-possible-with-work-around
-  geom_segment(
-    data = dnds_line,
-    aes(colour = factor(Gene_type), # important
-        x = Background, 
-        y = Gene_name, 
-        xend = Foreground, 
-        yend = Gene_name), 
-    linewidth=4) + labs(x = "\u03C9 (dN/dS)") +
-    scale_colour_manual(name = "Gene Types", values = gene_type_colours) +
-  
-  # Removes the legend for this specific legend
-  scale_colour_discrete(guide="none") +
-  
-  # Adding breaks to the x-axis, for some reason, the breaks only contain the max
-  # if you set the limits for scale_x_continuous
-  scale_x_continuous(n.breaks = 10, limits = c(floor(min(range_all_data)), 
-                                               ceiling(max(range_all_data))))
+  new_scale_color()
+
+# Choosing the different colours for the segments when they are of diff gene_types
+if (!(all(dnds_line$Gene_type == "na"))){
+  # gene_type_colours <- brewer.pal(length(levels(factor(dnds_line$Gene_type))),"Dark2")
+  colours2 <- c("#1463ab","#df232a", "#626364","#AB5C14", 
+                "#23DFD8", "#88DF23", "#7A23DF")
+  gene_type_colours <- colours2[1:length(levels(factor(dnds_line$Gene_type)))]
+  graph <- graph + 
+    # Plots lines between dN/dS values
+    # Two manual scale solutions: 
+    # https://stackoverflow.com/questions/59391352/use-two-colour-scales-possible-with-work-around
+    geom_segment(
+      data = dnds_line,
+      aes(
+          colour = factor(Gene_type),
+          x = Background, 
+          y = Gene_name, 
+          xend = Foreground, 
+          yend = Gene_name), 
+      linewidth=4) + labs(x = "\u03C9 (dN/dS)") +
+    scale_colour_manual(name = "Gene Type", values = gene_type_colours) +
+    
+    # Removes the legend for this specific legend
+    # scale_colour_discrete(guide="none") +
+    
+    # Adding breaks to the x-axis, for some reason, the breaks only contain the max
+    # if you set the limits for scale_x_continuous
+    scale_x_continuous(n.breaks = 10, limits = c(floor(min(range_all_data)), 
+                                                 ceiling(max(range_all_data))))
+}else{
+  graph <- graph +
+    geom_segment(
+      colour = '#1952a8',
+      data = dnds_line,
+      aes(x = Background, 
+          y = Gene_name, 
+          xend = Foreground, 
+          yend = Gene_name), 
+      linewidth=4) + labs(x = "\u03C9 (dN/dS)") +
+    scale_x_continuous(n.breaks = 10, limits = c(floor(min(range_all_data)), 
+                                                 ceiling(max(range_all_data))))
+}
 
 graph <- graph +
   
