@@ -3,7 +3,7 @@
 
 ## rvg allows you to convert R objects into vectors that 
 ## pptx can understand. The officer package allows manipulation 
-## of MS Files from the R interface.
+## of MS Files from the R interface. 
 
 library(tidyverse)
 library(rvg)
