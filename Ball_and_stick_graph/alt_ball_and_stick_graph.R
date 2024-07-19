@@ -14,10 +14,30 @@ library(ggnewscale)
 library(RColorBrewer)
 
 # Read the file into csv
-dnds <- read.csv("SampleData_types.csv")
+dnds <- read.csv("SampleData_types_proportion.csv")
 
 # Read in the ppt
 my_ppt <- read_pptx('Template.pptx')
+
+# Inefficient data processing
+for(i in 1:length(dnds$Proportion)){
+  value <- dnds$Proportion[i]
+  if(value < 0.01){
+    dnds$Proportion[i] <- '0.01 or less'
+  } else if(value < 0.025){
+    dnds$Proportion[i] <- '0.01-0.025'
+  } else if(value < 0.05){
+    dnds$Proportion[i] <- '0.025-0.05'
+  } else if(value < 0.1){
+    dnds$Proportion[i] <- '0.05-0.1'
+  } else if(value < 0.2){
+    dnds$Proportion[i] <- '0.1-0.2'
+  } else if(value <= 0.5){
+    dnds$Proportion[i] <- '0.2-0.5'
+  } else{
+    dnds$Proportion[i] <- '0.5 or greater'
+  }
+}
 
 # Transforms to wide format for plotting lines
 dnds_line <- spread(dnds, key = Background_Foreground, value = dNdS)
@@ -49,6 +69,7 @@ graph <- ggplot() +
         linewidth=4,
         ) + 
   scale_color_manual(name="Statistical Significance", values = color) + 
+  guides(colour="none")+
   
   # The function from the ggnewscale that allows R to have multiple manual 
   # scales for color
@@ -75,9 +96,6 @@ if (!(all(dnds_line$Gene_type == "na"))){
       linewidth=4) + labs(x = "\u03C9 (dN/dS)") +
     scale_colour_manual(name = "Gene Type", values = gene_type_colours) +
     
-    # Removes the legend for this specific legend
-    # scale_colour_discrete(guide="none") +
-    
     # Adding breaks to the x-axis, for some reason, the breaks only contain the max
     # if you set the limits for scale_x_continuous
     scale_x_continuous(n.breaks = 10, limits = c(floor(min(range_all_data)), 
@@ -97,8 +115,6 @@ if (!(all(dnds_line$Gene_type == "na"))){
 }
 
 graph <- graph +
-  # Removes the legend of the coloring
-  guides(color="none") +
   
   # Add Vertical lines to the graph
   # source: https://stackoverflow.com/questions/71569614/how-to-get-a-complete-vector-of-breaks-from-the-scale-of-a-plot-in-r
@@ -112,12 +128,16 @@ graph <- graph +
   geom_point(
     data = dnds,
     stroke = 1.2,
+    shape = 21,
     aes(x=dNdS,
         y=Gene_name,
-        fill=Background_Foreground),
-    size=4.3,
-    shape = 21) + 
+        fill=Background_Foreground,
+        size=ordered(Proportion))) + 
   scale_fill_manual(name="Background/Foreground", values=c("black", "white")) +
+  scale_size_manual(name = "Proportion", values=c(3, 3.7, 4.2, 4.9, 5.6, 6.3, 7)) +
+  
+  # Remove the colour guide
+  guides(colour="none") +
   
   # Scales axis and sets the aesthetics for the chart
   theme(
@@ -160,4 +180,3 @@ my_ppt <- my_ppt %>% ph_with(dml(ggobj=graph),
                              location = ph_location_label(ph_label = 'R Placeholder'))
 ## save/download pptx
 print(my_ppt, paste0('Presentation.pptx'))
-
