@@ -75,9 +75,6 @@ if (!(all(dnds_line$Gene_type == "na"))){
       linewidth=4) + labs(x = "\u03C9 (dN/dS)") +
     scale_colour_manual(name = "Gene Type", values = gene_type_colours) +
     
-    # Removes the legend for this specific legend
-    # scale_colour_discrete(guide="none") +
-    
     # Adding breaks to the x-axis, for some reason, the breaks only contain the max
     # if you set the limits for scale_x_continuous
     scale_x_continuous(n.breaks = 10, limits = c(floor(min(range_all_data)), 
