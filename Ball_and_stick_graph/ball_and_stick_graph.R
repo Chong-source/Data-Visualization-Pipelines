@@ -5,6 +5,16 @@
 ## pptx can understand. The officer package allows manipulation 
 ## of MS Files from the R interface. 
 
+# If you don't have these packages, un-comment the following lines to install
+# install.packages("tidyverse")
+# install.packages("rvg")
+# install.packages("dplyr")
+# install.packages("ggplot2")
+# install.packages("officer")
+# install.packages("ggnewscale")
+# install.packages("RColorBrewer")
+# install.packages("forcats")
+
 library(tidyverse)
 library(rvg)
 library(dplyr)

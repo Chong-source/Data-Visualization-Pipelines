@@ -5,6 +5,16 @@
 ## pptx can understand. The officer package allows manipulation 
 ## of MS Files from the R interface.
 
+# If you don't have these packages, un-comment the following lines to install
+# install.packages("tidyverse")
+# install.packages("rvg")
+# install.packages("dplyr")
+# install.packages("ggplot2")
+# install.packages("officer")
+# install.packages("ggnewscale")
+# install.packages("RColorBrewer")
+# install.packages("forcats")
+
 library(tidyverse)
 library(rvg)
 library(dplyr)
@@ -40,7 +50,11 @@ for(i in 1:length(dnds$Proportion)){
 }
 
 # Transforms to wide format for plotting lines
-dnds_line <- spread(dnds, key = Background_Foreground, value = dNdS)
+dnds_line <- dnds %>% 
+  spread(key = Background_Foreground, value = dNdS) %>%
+  mutate(Gene_name=fct_reorder(Gene_name, desc(Gene_name)))
+# Note: You can make the labels in the y-axis reversed ordered if you remove 
+# the mutate function
 
 # Fixing the color bug where if all the data are insignificant
 # because the color template has 2 colors, it will show as significant.
