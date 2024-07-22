@@ -1,4 +1,6 @@
 #Testing functions and pipe lines
+library(dplyr)
+
 add_two_vectors <- function(x, y){
   x+y
 }
@@ -15,6 +17,6 @@ minus_vector_by_1 <- function(x){
 
 #Note: Basically the pipe line will 
 c <- add_two_vectors(a, b) %>%
-  multiply_two_vectors(y=c(2)) %>%
-  minus_vector_by_1
-
+  multiply_two_vectors(y=c(2)) %>% 
+  minus_vector_by_1()
+# Result: c == [3 7 11]

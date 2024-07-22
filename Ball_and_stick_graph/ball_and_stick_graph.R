@@ -12,15 +12,20 @@ library(ggplot2)
 library(officer)
 library(ggnewscale)
 library(RColorBrewer)
+library(forcats)
 
 # Read the file into csv
-dnds <- read.csv("SampleData_types.csv")
+dnds <- read.csv("SampleData_without_types.csv")
 
 # Read in the ppt
 my_ppt <- read_pptx('Template.pptx')
 
 # Transforms to wide format for plotting lines
-dnds_line <- spread(dnds, key = Background_Foreground, value = dNdS)
+dnds_line <- dnds %>% 
+  spread(key = Background_Foreground, value = dNdS) %>%
+  mutate(Gene_name=fct_reorder(Gene_name, desc(Gene_name)))
+# Note: You can make the labels in the y-axis reversed ordered if you remove 
+# the mutate function
 
 # Fixing the color bug where if all the data are insignificant
 # because the color template has 2 colors, it will show as significant.
@@ -48,11 +53,11 @@ graph <- ggplot() +
         colour = Statistical_Significance), 
         linewidth=4,
         ) + 
-  scale_color_manual(name="Statistical Significance", values = color) + 
+  scale_color_manual(name="Statistical Significance", values = color) +  
   
   # The function from the ggnewscale that allows R to have multiple manual 
   # scales for color
-  new_scale_color()
+  new_scale_color() 
 
 # Choosing the different colours for the segments when they are of diff gene_types
 if (!(all(dnds_line$Gene_type == "na"))){
