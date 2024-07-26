@@ -248,4 +248,4 @@ my_ppt <- read_pptx('ppt_phylo_graph.pptx')
 my_ppt <- my_ppt %>% ph_with(dml(ggobj=p),
                              location = ph_location_label(ph_label = 'R Placeholder'))
 ## save/download ppt 
-print(my_ppt, paste0('my_R_presentation.pptx'))
+print(my_ppt, paste0('Presentation.pptx'))
