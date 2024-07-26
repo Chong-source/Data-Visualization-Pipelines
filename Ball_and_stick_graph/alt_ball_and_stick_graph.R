@@ -146,9 +146,12 @@ graph <- graph +
     aes(x=dNdS,
         y=Gene_name,
         fill=Background_Foreground,
+        colour=Background_Foreground,
         size=ordered(Proportion))) + 
   scale_fill_manual(name="Background/Foreground", values=c("black", "white")) +
   scale_size_manual(name = "Proportion", values=c(3, 3.7, 4.2, 4.9, 5.6, 6.3, 7)) +
+  scale_colour_manual(name='diff sizes', values = c("#1463ab","#df232a", "#626364","#AB5C14", 
+                                                    "#23DFD8", "#88DF23", "#7A23DF"))+
   
   # Remove the colour guide
   guides(colour="none") +
