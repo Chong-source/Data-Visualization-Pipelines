@@ -243,6 +243,7 @@ if (!is.null(tree@data$AAsub)){
 p
 
 ########################## pptx presentation ###################################
+# Source: https://medium.com/@statisticswithoutborders/r-function-of-the-week-writing-editable-r-objects-to-powerpoint-b081a31d0cf8
 my_ppt <- read_pptx('ppt_phylo_graph.pptx')
 ## insert into ppt 
 my_ppt <- my_ppt %>% ph_with(dml(ggobj=p),
