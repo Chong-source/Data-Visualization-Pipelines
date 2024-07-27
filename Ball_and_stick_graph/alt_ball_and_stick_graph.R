@@ -1,9 +1,9 @@
 ## Plots clade model dN/dS estimates by gene
-## Last updated 20240607 by Chong
+## Last updated 20240719 by Chong
 
 ## rvg allows you to convert R objects into vectors that 
 ## pptx can understand. The officer package allows manipulation 
-## of MS Files from the R interface. 
+## of MS Files from the R interface.
 
 # If you don't have these packages, un-comment the following lines to install
 # install.packages("tidyverse")
@@ -22,13 +22,32 @@ library(ggplot2)
 library(officer)
 library(ggnewscale)
 library(RColorBrewer)
-library(forcats)
 
 # Read the file into csv
-dnds <- read.csv("SampleData_without_types.csv")
+dnds <- read.csv("SampleData_types_proportion.csv")
 
 # Read in the ppt
 my_ppt <- read_pptx('Template.pptx')
+
+# Inefficient data processing
+for(i in 1:length(dnds$Proportion)){
+  value <- dnds$Proportion[i]
+  if(value < 0.01){
+    dnds$Proportion[i] <- '0.01 or less'
+  } else if(value < 0.025){
+    dnds$Proportion[i] <- '0.01-0.025'
+  } else if(value < 0.05){
+    dnds$Proportion[i] <- '0.025-0.05'
+  } else if(value < 0.1){
+    dnds$Proportion[i] <- '0.05-0.1'
+  } else if(value < 0.2){
+    dnds$Proportion[i] <- '0.1-0.2'
+  } else if(value <= 0.5){
+    dnds$Proportion[i] <- '0.2-0.5'
+  } else{
+    dnds$Proportion[i] <- '0.5 or greater'
+  }
+}
 
 # Transforms to wide format for plotting lines
 dnds_line <- dnds %>% 
@@ -63,11 +82,12 @@ graph <- ggplot() +
         colour = Statistical_Significance), 
         linewidth=4,
         ) + 
-  scale_color_manual(name="Statistical Significance", values = color) +  
+  scale_color_manual(name="Statistical Significance", values = color) + 
+  guides(colour="none")+
   
   # The function from the ggnewscale that allows R to have multiple manual 
   # scales for color
-  new_scale_color() 
+  new_scale_color()
 
 # Choosing the different colours for the segments when they are of diff gene_types
 if (!(all(dnds_line$Gene_type == "na"))){
@@ -109,8 +129,6 @@ if (!(all(dnds_line$Gene_type == "na"))){
 }
 
 graph <- graph +
-  # Removes the legend of the coloring
-  guides(color="none") +
   
   # Add Vertical lines to the graph
   # source: https://stackoverflow.com/questions/71569614/how-to-get-a-complete-vector-of-breaks-from-the-scale-of-a-plot-in-r
@@ -124,12 +142,19 @@ graph <- graph +
   geom_point(
     data = dnds,
     stroke = 1.2,
+    shape = 21,
     aes(x=dNdS,
         y=Gene_name,
-        fill=Background_Foreground),
-    size=4.3,
-    shape = 21) + 
+        fill=Background_Foreground,
+        colour=Background_Foreground,
+        size=ordered(Proportion))) + 
   scale_fill_manual(name="Background/Foreground", values=c("black", "white")) +
+  scale_size_manual(name = "Proportion", values=c(3, 3.7, 4.2, 4.9, 5.6, 6.3, 7)) +
+  scale_colour_manual(name='diff sizes', values = c("#1463ab","#df232a", "#626364","#AB5C14", 
+                                                    "#23DFD8", "#88DF23", "#7A23DF"))+
+  
+  # Remove the colour guide
+  guides(colour="none") +
   
   # Scales axis and sets the aesthetics for the chart
   theme(
@@ -172,4 +197,3 @@ my_ppt <- my_ppt %>% ph_with(dml(ggobj=graph),
                              location = ph_location_label(ph_label = 'R Placeholder'))
 ## save/download pptx
 print(my_ppt, paste0('Presentation.pptx'))
-

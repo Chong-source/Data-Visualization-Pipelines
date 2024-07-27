@@ -1,10 +1,12 @@
 Gene_type,Gene_name,dNdS,Statistical_Significance,Background_Foreground
-Rod,CNGA1,1.236421097,Yes,Background
-Rod,CNGA1,1.538584799,Yes,Foreground
+Rod,CNGA1A,1.236421097,Yes,Background
+Rod,CNGA1A,1.538584799,Yes,Foreground
 Rod,CNGA2,1.361053777,No,Background
 Rod,CNGA2,1.355321643,No,Foreground
 Rod,CNGA4,1.309058353,Yes,Background
 Rod,CNGA4,1.088380047,Yes,Foreground
+Cone,CNGA1A,1.236421097,Yes,Background
+Cone,CNGA1A,1.538584799,Yes,Foreground
 Cone,CNGA7,1.78007679,No,Background
 Cone,CNGA7,1.348148298,No,Foreground
 Cone,CNGA8,1.449988788,Yes,Background
