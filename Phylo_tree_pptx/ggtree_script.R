@@ -227,10 +227,10 @@ if (!is.null(tree@data$AAsub)){
 # at the top
 p <- ggtree(tree, ladderize = TRUE, right = TRUE)
 p <- p + theme_tree2() + geom_tiplab(size = SPECIES_NAME_FONT_SIZE, family = "sans") + 
-  theme(legend.position="none") + 
-  geom_text(aes(x = branch, label = string_distances), 
-            size = BRANCH_ANNOTATION_FONT_SIZE, 
-            nudge_y = BRANCH_ANNOTATION_VERTICAL_SHIFT, 
+  theme(legend.position="none")
+  + geom_text(aes(x = branch, label = string_distances),
+            size = BRANCH_ANNOTATION_FONT_SIZE,
+            nudge_y = BRANCH_ANNOTATION_VERTICAL_SHIFT,
             nudge_x = PHYLOGENETIC_DISTANCE_HORIZONTAL_SHIFT)
 
 if (!is.null(tree@data$AAsub)){
