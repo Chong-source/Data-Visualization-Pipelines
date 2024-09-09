@@ -6,7 +6,7 @@
 # "retinal_release_script.R", then enter the parameter values of the curves into 
 # the "USER_INPUT" section.
 
-################################## USER INPUT ##################################
+################################## USER INPUTS ##################################
 
 # ---------------------------------- GENERAL -----------------------------------
 
