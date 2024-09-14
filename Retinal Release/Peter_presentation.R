@@ -18,8 +18,6 @@ library(dplyr)
 library(ggplot2)
 
 #-----------------------------------------
-## Setting up pptx
-my_ppt <- read_pptx('Retinal_Release_Presentation.pptx')
 # ## save to df 
 # df <- my_ppt %>% officer::layout_properties()
 # ## Find Placeholder in df 
@@ -50,10 +48,12 @@ element_text(size = 15, hjust = 0.5, vjust = 1.5)) +
 theme(strip.text.x = element_text(size = 20, hjust = 0.5, vjust = 0.5, face = 'bold'))
 
 #---------------------
+## Setting up pptx
+my_ppt <- read_pptx('Retinal_Release_Presentation.pptx')
 ##pptx presentation download
 my_ppt <- my_ppt %>% ph_with(dml(ggobj=graph),          
                              location = ph_location_label(ph_label='R Placeholder'))
+my_ppt <- my_ppt %>% ph_with(dml(ggobj=bar),          
+                             location = ph_location_label(ph_label='R Placeholder 2'))
 print(my_ppt, paste0('Retinal_Release_Presentation.pptx'))
-
-
 
