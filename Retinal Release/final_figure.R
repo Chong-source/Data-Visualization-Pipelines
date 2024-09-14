@@ -5,8 +5,32 @@
 # same plot. For the fitted curves, first input each dataset separately into 
 # "retinal_release_script.R", then enter the parameter values of the curves into 
 # the "USER_INPUT" section.
-
+--------------------------------------------------------------------------------
+library(tidyverse)
+library(rvg)
+library(dplyr)
+library(ggplot2)
+library(officer)
+library(ggnewscale)
+library(RColorBrewer)
+library(forcats)
 ################################## USER INPUT ##################################
+# ------------------------------ Processing Raw Data ---------------------------
+
+# read the csv file (columns must be in the format: time against fluorescence)
+df <- read.csv("rrtest1.csv")
+
+colnames(df) <- c("Time", "Fluorescence")
+data_size <- length(df$Time)
+
+df <- data.frame(df$Time[curve_first_data_point:data_size],
+                 df$Fluorescence[curve_first_data_point:data_size])
+colnames(df) <- c("Time", "Fluorescence")
+
+# normalizes the data so that the maximum fluorescence is 1, and shifts the data
+# so the first data point is at time = 0.
+df$Fluorescence <- df$Fluorescence/max(df$Fluorescence)
+df$Time <- df$Time - df$Time[1]
 
 # ---------------------------------- GENERAL -----------------------------------
 
@@ -395,5 +419,15 @@ first_data
 bardata <- data.frame(t = half_lives, names = c("test1"))
 bar_hl <- ggplot(data = bardata, aes(names)) + geom_bar()
 bar_hl
+
+#-----------------------------------------------------------------------
+## Setting up pptx
+my_ppt <- read_pptx('Retinal_Release_Presentation.pptx')
+##pptx presentation download
+my_ppt <- my_ppt %>% ph_with(dml(ggobj=first_data),          
+                             location = ph_location_label(ph_label='R Placeholder'))
+my_ppt <- my_ppt %>% ph_with(dml(ggobj=bar_hl),          
+                             location = ph_location_label(ph_label='R Placeholder 2'))
+print(my_ppt, paste0('Retinal_Release_Presentation2.pptx'))
 
 
