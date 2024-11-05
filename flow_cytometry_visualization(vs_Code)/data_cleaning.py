@@ -5,9 +5,6 @@ import csv
 import pprint
 from statistics import stdev
 
-path = 'data.csv'
-data_dict = {}
-
 # Helper method to add items to dict
 def add_to_dict(data_dict: dict, key: str, value: list) -> None:
     # Check if the key is already in the dictionary
@@ -59,112 +56,113 @@ def split_data_light_dark(data_dict: dict[str, list[str]]) -> None:
                               "ex_dark_gfp_std": stdev(ex_dark_gfp), "ex_dark_mscarlet_std": stdev(ex_dark_mscarlet),
                               "signal_over_noise_std": signal_over_noise_std}
 
+def create_csv(path: str) -> None:  
+    data_dict = {}    
+    # Open the CSV file
+    with open(path, mode='r') as file:
+        # Create a CSV reader object
+        csv_reader = csv.reader(file)
+        
+        # Skip the header
+        next(csv_reader)
+        
+        # Iterate over the rows in the CSV file
+        for row in csv_reader:
+            row[1] = float(row[1])
+            row[2] = float(row[2].replace(',', '.'))
+            key = row[0][0:12]  # Assuming the first item is the key
+            value = row  # The rest of the row is the value
             
-# Open the CSV file
-with open(path, mode='r') as file:
-    # Create a CSV reader object
-    csv_reader = csv.reader(file)
-    
-    # Skip the header
-    next(csv_reader)
-    
-    # Iterate over the rows in the CSV file
-    for row in csv_reader:
-        row[1] = float(row[1])
-        row[2] = float(row[2].replace(',', '.'))
-        key = row[0][0:12]  # Assuming the first item is the key
-        value = row  # The rest of the row is the value
+            # Add the key-value pair to the dictionary
+            add_to_dict(data_dict, key, value)
+            
+        # Split the data into QC and EX
+        split_data_gene(data_dict)
         
-        # Add the key-value pair to the dictionary
-        add_to_dict(data_dict, key, value)
+        # Split the data into light and dark
+        split_data_light_dark(data_dict)
         
-    # Split the data into QC and EX
-    split_data_gene(data_dict)
-    
-    # Split the data into light and dark
-    split_data_light_dark(data_dict)
-    
-    # pprint.pprint(data_dict['JL701 pRS316']['EX'])
-    # print(data_dict.keys())
-    # print(len(data_dict.keys()))
-    # print(data_dict['SC031 pRS316'])
-    
-with open("gfp_data_grouped.csv", "w") as file:
-    # Columns: gene_name, QC/EX, light/dark, fluorescence, value
-    writer = csv.writer(file)
-    keys = data_dict.keys()
-    # Write the header
-    writer.writerow(["gene_name", "QC/EX light/dark", "value", "stdev"])
-    # Write the data
-    for key in keys:
-        gene_data = data_dict[key]
-        # Write the rows for QC
-        writer.writerow([key, "QC Light", gene_data["qc_light_gfp"], gene_data["qc_light_gfp_std"]])
-        writer.writerow([key, "QC Dark", gene_data["qc_dark_gfp"], gene_data["qc_dark_gfp_std"]])
-        # Write the rows for EX
-        writer.writerow([key, "EX Light", gene_data["ex_light_gfp"], gene_data["ex_light_gfp_std"]])
-        writer.writerow([key, "EX Dark", gene_data["ex_dark_gfp"], gene_data["ex_dark_gfp_std"]])
-    print("successfully wrote gfp_data_grouped.csv")
+        # pprint.pprint(data_dict['JL701 pRS316']['EX'])
+        # print(data_dict.keys())
+        # print(len(data_dict.keys()))
+        # print(data_dict['SC031 pRS316'])
+        
+    with open("gfp_data_grouped.csv", "w") as file:
+        # Columns: gene_name, QC/EX, light/dark, fluorescence, value
+        writer = csv.writer(file)
+        keys = data_dict.keys()
+        # Write the header
+        writer.writerow(["gene_name", "QC/EX light/dark", "value", "stdev"])
+        # Write the data
+        for key in keys:
+            gene_data = data_dict[key]
+            # Write the rows for QC
+            writer.writerow([key, "QC Light", gene_data["qc_light_gfp"], gene_data["qc_light_gfp_std"]])
+            writer.writerow([key, "QC Dark", gene_data["qc_dark_gfp"], gene_data["qc_dark_gfp_std"]])
+            # Write the rows for EX
+            writer.writerow([key, "EX Light", gene_data["ex_light_gfp"], gene_data["ex_light_gfp_std"]])
+            writer.writerow([key, "EX Dark", gene_data["ex_dark_gfp"], gene_data["ex_dark_gfp_std"]])
+        print("successfully wrote gfp_data_grouped.csv")
 
-with open("ymScarlet_data_grouped.csv", "w") as file:
-    # Columns: gene_name, QC/EX, light/dark, fluorescence, value
-    writer = csv.writer(file)
-    keys = data_dict.keys()
-    # Write the header
-    writer.writerow(["gene_name", "QC/EX light/dark", "value", "stdev"])
-    # Write the data
-    for key in keys:
-        gene_data = data_dict[key]
-        # Write the rows for QC 
-        writer.writerow([key, "QC Light", gene_data["qc_light_mscarlet"], gene_data["qc_light_mscarlet_std"]])
-        writer.writerow([key, "QC Dark", gene_data["qc_dark_mscarlet"], gene_data["qc_dark_mscarlet_std"]])
-        # Write the rows for EX
-        writer.writerow([key, "EX Light", gene_data["ex_light_mscarlet"], gene_data["ex_light_mscarlet_std"]])
-        writer.writerow([key, "EX Dark", gene_data["ex_dark_mscarlet"], gene_data["ex_dark_mscarlet_std"]])
-    print("successfully wrote ymScarlet_data_grouped.csv")
-        
-with open("gfp_data_ungrouped.csv", "w") as file:
-    # Columns: gene_name, QC/EX, light/dark, fluorescence, value
-    writer = csv.writer(file)
-    keys = data_dict.keys()
-    # Write the header
-    writer.writerow(["gene_name", "QC/EX light/dark", "value", "stdev"])
-    # Write the data
-    for key in keys:
-        gene_data = data_dict[key]
-        # Write the rows for QC
-        writer.writerow([key + " QC", "Light", gene_data["qc_light_gfp"], gene_data["qc_light_gfp_std"]])
-        writer.writerow([key + " QC", "Dark", gene_data["qc_dark_gfp"], gene_data["qc_dark_gfp_std"]])
-        # Write the rows for EX
-        writer.writerow([key + " EX", "Light", gene_data["ex_light_gfp"], gene_data["ex_light_gfp_std"]])
-        writer.writerow([key + " EX", "Dark", gene_data["ex_dark_gfp"], gene_data["ex_dark_gfp_std"]])
-    print("successfully wrote gfp_data_ungrouped.csv")
-        
-with open("ymScarlet_data_ungrouped.csv", "w") as file:
-    # Columns: gene_name, QC/EX, light/dark, fluorescence, value
-    writer = csv.writer(file)
-    keys = data_dict.keys()
-    # Write the header
-    writer.writerow(["gene_name", "QC/EX light/dark", "value", "stdev"])
-    # Write the data
-    for key in keys:
-        gene_data = data_dict[key]
-        # Write the rows for QC 
-        writer.writerow([key + " QC", "Light", gene_data["qc_light_mscarlet"], gene_data["qc_light_mscarlet_std"]])
-        writer.writerow([key + " QC", "Dark", gene_data["qc_dark_mscarlet"], gene_data["qc_dark_mscarlet_std"]])
-        # Write the rows for EX
-        writer.writerow([key + " EX", "Light", gene_data["ex_light_mscarlet"], gene_data["ex_light_mscarlet_std"]])
-        writer.writerow([key + " EX", "Dark", gene_data["ex_dark_mscarlet"], gene_data["ex_dark_mscarlet_std"]])
-    print("successfully wrote ymScarlet_data_ungrouped.csv")
-        
-# GFP signal over noise data
-with open("gfp_signal_over_noise.csv", "w") as file:
-    writer = csv.writer(file)
-    keys = data_dict.keys()
-    # Write the header
-    writer.writerow(["gene_name", "value", "stdev"])
-    for key in keys:
-        gene_data = data_dict[key]
-        signal_over_noise = gene_data["ex_dark_gfp"] / gene_data["ex_light_gfp"]
-        writer.writerow([key, signal_over_noise, gene_data["signal_over_noise_std"]])
-    print("successfully wrote gfp_signal_over_noise.csv")
+    with open("ymScarlet_data_grouped.csv", "w") as file:
+        # Columns: gene_name, QC/EX, light/dark, fluorescence, value
+        writer = csv.writer(file)
+        keys = data_dict.keys()
+        # Write the header
+        writer.writerow(["gene_name", "QC/EX light/dark", "value", "stdev"])
+        # Write the data
+        for key in keys:
+            gene_data = data_dict[key]
+            # Write the rows for QC 
+            writer.writerow([key, "QC Light", gene_data["qc_light_mscarlet"], gene_data["qc_light_mscarlet_std"]])
+            writer.writerow([key, "QC Dark", gene_data["qc_dark_mscarlet"], gene_data["qc_dark_mscarlet_std"]])
+            # Write the rows for EX
+            writer.writerow([key, "EX Light", gene_data["ex_light_mscarlet"], gene_data["ex_light_mscarlet_std"]])
+            writer.writerow([key, "EX Dark", gene_data["ex_dark_mscarlet"], gene_data["ex_dark_mscarlet_std"]])
+        print("successfully wrote ymScarlet_data_grouped.csv")
+            
+    with open("gfp_data_ungrouped.csv", "w") as file:
+        # Columns: gene_name, QC/EX, light/dark, fluorescence, value
+        writer = csv.writer(file)
+        keys = data_dict.keys()
+        # Write the header
+        writer.writerow(["gene_name", "QC/EX light/dark", "value", "stdev"])
+        # Write the data
+        for key in keys:
+            gene_data = data_dict[key]
+            # Write the rows for QC
+            writer.writerow([key + " QC", "Light", gene_data["qc_light_gfp"], gene_data["qc_light_gfp_std"]])
+            writer.writerow([key + " QC", "Dark", gene_data["qc_dark_gfp"], gene_data["qc_dark_gfp_std"]])
+            # Write the rows for EX
+            writer.writerow([key + " EX", "Light", gene_data["ex_light_gfp"], gene_data["ex_light_gfp_std"]])
+            writer.writerow([key + " EX", "Dark", gene_data["ex_dark_gfp"], gene_data["ex_dark_gfp_std"]])
+        print("successfully wrote gfp_data_ungrouped.csv")
+            
+    with open("ymScarlet_data_ungrouped.csv", "w") as file:
+        # Columns: gene_name, QC/EX, light/dark, fluorescence, value
+        writer = csv.writer(file)
+        keys = data_dict.keys()
+        # Write the header
+        writer.writerow(["gene_name", "QC/EX light/dark", "value", "stdev"])
+        # Write the data
+        for key in keys:
+            gene_data = data_dict[key]
+            # Write the rows for QC 
+            writer.writerow([key + " QC", "Light", gene_data["qc_light_mscarlet"], gene_data["qc_light_mscarlet_std"]])
+            writer.writerow([key + " QC", "Dark", gene_data["qc_dark_mscarlet"], gene_data["qc_dark_mscarlet_std"]])
+            # Write the rows for EX
+            writer.writerow([key + " EX", "Light", gene_data["ex_light_mscarlet"], gene_data["ex_light_mscarlet_std"]])
+            writer.writerow([key + " EX", "Dark", gene_data["ex_dark_mscarlet"], gene_data["ex_dark_mscarlet_std"]])
+        print("successfully wrote ymScarlet_data_ungrouped.csv")
+            
+    # GFP signal over noise data
+    with open("gfp_signal_over_noise.csv", "w") as file:
+        writer = csv.writer(file)
+        keys = data_dict.keys()
+        # Write the header
+        writer.writerow(["gene_name", "value", "stdev"])
+        for key in keys:
+            gene_data = data_dict[key]
+            signal_over_noise = gene_data["ex_dark_gfp"] / gene_data["ex_light_gfp"]
+            writer.writerow([key, signal_over_noise, gene_data["signal_over_noise_std"]])
+        print("successfully wrote gfp_signal_over_noise.csv")
