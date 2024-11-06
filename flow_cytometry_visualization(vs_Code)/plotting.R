@@ -17,9 +17,9 @@ gfp$QC.EX.light.dark <- factor(gfp$QC.EX.light.dark,
                                 levels = c("QC Dark", "QC Light", "EX Dark", "EX Light"))
 
 gfpGrouped <- ggplot(gfp, aes(fill = QC.EX.light.dark, y = value, x = gene_name)) + 
-  geom_bar(position = "dodge", stat = "identity") + 
+  geom_bar(position = position_dodge(width = 0.8), stat = "identity") + 
   geom_errorbar(aes(ymin = value - stdev, ymax = value + stdev), 
-  width = 0.25, position = position_dodge(0.9)) +
+  width = 0.25, position = position_dodge(0.8)) +
   scale_fill_manual(values = c("#F8766D", "#00BFC4", "#c561ff", "#00BA38"), 
                     labels = c("QCDark", "QCLight", "EX Dark", "EX ight")) +
   labs(title = 'gfpGrouped', y = 'GFP Fluorescence (A.U.)', fill = "Condition") +
@@ -30,9 +30,9 @@ gfpGrouped
 
 # gfpUngrouped
 gfpUngrouped <- ggplot(ungrouped_gfp, aes(fill=QC.EX.light.dark, y=value, x=gene_name)) + 
-  geom_bar(position="dodge", stat="identity") +
+  geom_bar(position = position_dodge(width = 0.8), stat = "identity") +
   geom_errorbar(aes(ymin = value - stdev, ymax = value + stdev), 
-  width = 0.25, position = position_dodge(0.9)) +
+  width = 0.25, position = position_dodge(0.8)) +
   labs(title='gfpUngrouped', y='GFP Fluorescence (A.U.)') +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
@@ -43,9 +43,9 @@ mscarlet$QC.EX.light.dark <- factor(gfp$QC.EX.light.dark,
                                 levels = c("QC Dark", "QC Light", "EX Dark", "EX Light"))
 
 mscarletGrouped <- ggplot(mscarlet, aes(fill=QC.EX.light.dark, y=value, x=gene_name)) + 
-  geom_bar(position="dodge", stat="identity") +
+  geom_bar(position = position_dodge(width = 0.8), stat = "identity") +
   geom_errorbar(aes(ymin = value - stdev, ymax = value + stdev), 
-  width = 0.25, position = position_dodge(0.9)) +
+  width = 0.25, position = position_dodge(0.8)) +
   scale_fill_manual(values = c("#F8766D", "#00BFC4", "#c561ff", "#00BA38"), 
                     labels = c("QCDark", "QCLight", "EX Dark", "EX ight")) +
   labs(title='mScarletGrouped', y='mScarlet Fluorescence (A.U.)', fill = "Condition") + 
@@ -54,9 +54,9 @@ mscarletGrouped
 
 # ymScarletUngrouped
 mscarletUngrouped <- ggplot(ungrouped_mscarlet, aes(fill=QC.EX.light.dark, y=value, x=gene_name)) + 
-  geom_bar(position="dodge", stat="identity") + 
+  geom_bar(position = position_dodge(width = 0.8), stat = "identity") + 
   geom_errorbar(aes(ymin = value - stdev, ymax = value + stdev), 
-  width = 0.25, position = position_dodge(0.9)) +
+  width = 0.25, position = position_dodge(0.8)) +
   labs(title='mScarletUngrouped', y='mScarlet Fluorescence (A.U.)') + 
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
@@ -64,7 +64,7 @@ mscarletUngrouped
 
 # gfpSignalOverNoise
 gfpSignalOverNoise <- ggplot(gfpSignalOverNoise_data, aes(fill='orange', y=value, x=gene_name)) +
-  geom_bar(position="dodge", stat="identity") + 
+  geom_bar(position="dodge", stat="identity", width = 0.8) + 
   geom_errorbar(aes(ymin = value - stdev, ymax = value + stdev), 
   width = 0.25, position = position_dodge(0.9)) +
   labs(title='gfpSignalOverNoise', y='Signal Over Noise (ratio)') + 
