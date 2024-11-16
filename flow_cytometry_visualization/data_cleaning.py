@@ -166,3 +166,4 @@ def create_csv(path: str) -> None:
             signal_over_noise = gene_data["ex_dark_gfp"] / gene_data["ex_light_gfp"]
             writer.writerow([key, signal_over_noise, gene_data["signal_over_noise_std"]])
         print("successfully wrote gfp_signal_over_noise.csv")
+        
